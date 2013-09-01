@@ -1,4 +1,4 @@
-/* CODE FROM: https://github.com/adobe/brackets/blob/f252f5a806d464dd8f0bf0bec446dab7832e4717/src/extensions/default/JavaScriptQuickEdit/main.js */
+/* https://github.com/adobe/brackets/blob/master/src/extensions/default/JavaScriptQuickEdit/main.js */
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, brackets, $ */
@@ -12,7 +12,8 @@ define(function (require, exports, module) {
         EditorManager           = brackets.getModule("editor/EditorManager"),
         DocumentManager         = brackets.getModule("document/DocumentManager"),
         JSUtils                 = brackets.getModule("language/JSUtils"),
-        PerfUtils               = brackets.getModule("utils/PerfUtils");
+        PerfUtils               = brackets.getModule("utils/PerfUtils"),
+        NGUtils                 = brackets.getModule("./NGUtils");
     
     /**
      * Return the token string that is at the specified position.
@@ -54,7 +55,7 @@ define(function (require, exports, module) {
             .done(function (fileInfos) {
                 PerfUtils.markStart(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
                 
-                JSUtils.findMatchingFunctions(functionName, fileInfos)
+                NGUtils.findMatchingDirectives(functionName, fileInfos)
                     .done(function (functions) {
                         PerfUtils.addMeasurement(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
                         result.resolve(functions);
@@ -100,7 +101,8 @@ define(function (require, exports, module) {
                     // Use QuickEdit search now that we know which file to look at.
                     var fileInfos = [];
                     fileInfos.push({name: jumpResp.resultFile, fullPath: resolvedPath});
-                    JSUtils.findMatchingFunctions(functionName, fileInfos, true)
+                    // JSUtils.findMatchingFunctions(functionName, fileInfos, true)
+                    NGUtils.findMatchingDirectives(functionName, fileInfos, true)
                         .done(function (functions) {
                             if (functions && functions.length > 0) {
                                 var jsInlineEditor = new MultiRangeInlineEditor(functions);
@@ -159,7 +161,7 @@ define(function (require, exports, module) {
      * @return {$.Promise} a promise that will be resolved with an InlineWidget
      *      or null if we're not going to provide anything.
      */
-    function javaScriptFunctionProvider(hostEditor, pos) {
+    function directiveProvider(hostEditor, pos) {
         // Only provide a JavaScript editor when cursor is in JavaScript content
         if (hostEditor.getModeForSelection() !== "html") {
             return null;
@@ -182,12 +184,12 @@ define(function (require, exports, module) {
     }
 
     // init
-    EditorManager.registerInlineEditProvider(javaScriptFunctionProvider);
+    EditorManager.registerInlineEditProvider(directiveProvider);
     PerfUtils.createPerfMeasurement("ANGULARJS_INLINE_CREATE", "AngularJS Inline Editor Creation");
     PerfUtils.createPerfMeasurement("ANGULARJS_FIND_DIRECTIVE", "AngularJS Find Directive");
     
     // for unit tests only
-    exports.javaScriptFunctionProvider  = javaScriptFunctionProvider;
-    exports._createInlineEditor         = _createInlineEditor;
-    exports._findInProject              = _findInProject;
+    exports.directiveProvider       = directiveProvider;
+    exports._createInlineEditor     = _createInlineEditor;
+    exports._findInProject          = _findInProject;
 });
