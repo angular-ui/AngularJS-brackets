@@ -55,7 +55,7 @@ define(function (require, exports, module) {
             .done(function (fileInfos) {
                 PerfUtils.markStart(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
                 
-                NGUtils.findMatchingDirectives(functionName, fileInfos)
+                NGUtils.findMatchingDirectives(functionName, fileInfos, true)
                     .done(function (functions) {
                         PerfUtils.addMeasurement(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
                         result.resolve(functions);
