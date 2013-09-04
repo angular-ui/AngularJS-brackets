@@ -34,7 +34,7 @@ define(function (require, exports, module) {
      * RegExp matches any sequence of characters that is not whitespace.
      * @type {RegExp}
      */
-    var _functionRegExp = /angular\.directive\(['"]([a-zA-Z-]+)['"]/g;
+    var _functionRegExp = /\.directive\(['"]([a-zA-Z-]+)['"]/g;
     
     /**
      * @private

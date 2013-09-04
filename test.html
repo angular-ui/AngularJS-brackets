@@ -1,4 +1,27 @@
+<html>
+<head>
 <script>
-angular.directive('ng-repeat')
+var myModule = angular.module('myModule', []);
+myModule.directive('ng-repeat', function(){
+    return {
+        template: '<cool>I hope this works</cool>',
+        scope: {},
+        link: function($scope, $elm, $attrs) {
+          // do awesome stuff here
+          alert('nice');
+        }
+    };
+});
 </script>
-<div ng-repeat="i in items"></div>
+<link type="text/css" href="" />
+<title>AngularJS Brackets Demo</title>
+</head>
+<body ng-app="myModule">
+    
+<h1>Kickass</h1>
+    
+<ul>
+    <li ng-repeat="i in items"></li>
+</ul>
+</body>
+</html>
