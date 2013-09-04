@@ -13,7 +13,7 @@ define(function (require, exports, module) {
         DocumentManager         = brackets.getModule("document/DocumentManager"),
         JSUtils                 = brackets.getModule("language/JSUtils"),
         PerfUtils               = brackets.getModule("utils/PerfUtils"),
-        NGUtils                 = brackets.getModule("./NGUtils");
+        NGUtils                 = require("NGUtils");
     
     /**
      * Return the token string that is at the specified position.
