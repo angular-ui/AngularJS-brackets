@@ -10,14 +10,14 @@ define(function (require, exports, module) {
     "use strict";
     
     // Load brackets modules
-    var Async                   = require("utils/Async"),
-        DocumentManager         = require("document/DocumentManager"),
-        ChangedDocumentTracker  = require("document/ChangedDocumentTracker"),
-        FileUtils               = require("file/FileUtils"),
-        NativeFileSystem        = require("file/NativeFileSystem").NativeFileSystem,
-        CollectionUtils         = require("utils/CollectionUtils"),
-        PerfUtils               = require("utils/PerfUtils"),
-        StringUtils             = require("utils/StringUtils");
+    var Async                   = brackets.getModule("utils/Async"),
+        DocumentManager         = brackets.getModule("document/DocumentManager"),
+        ChangedDocumentTracker  = brackets.getModule("document/ChangedDocumentTracker"),
+        FileUtils               = brackets.getModule("file/FileUtils"),
+        NativeFileSystem        = brackets.getModule("file/NativeFileSystem").NativeFileSystem,
+        CollectionUtils         = brackets.getModule("utils/CollectionUtils"),
+        PerfUtils               = brackets.getModule("utils/PerfUtils"),
+        StringUtils             = brackets.getModule("utils/StringUtils");
 
     /**
      * Tracks dirty documents between invocations of findMatchingFunctions.
