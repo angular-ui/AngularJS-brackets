@@ -20,7 +20,7 @@ define(function (require, exports, module) {
         StringUtils             = brackets.getModule("utils/StringUtils");
 
     /**
-     * Tracks dirty documents between invocations of findMatchingFunctions.
+     * Tracks dirty documents between invocations of findMatchingDirectives.
      * @type {ChangedDocumentTracker}
      */
     var _changedDocumentTracker = new ChangedDocumentTracker();
@@ -350,7 +350,7 @@ define(function (require, exports, module) {
      *      source document, start line, and end line (0-based, inclusive range) for each matching function list.
      *      Does not addRef() the documents returned in the array.
      */
-    function findMatchingFunctions(functionName, fileInfos, keepAllFiles) {
+    function findMatchingDirectives(functionName, fileInfos, keepAllFiles) {
         var result          = new $.Deferred(),
             jsFiles         = [],
             docEntries      = [];
@@ -384,7 +384,7 @@ define(function (require, exports, module) {
      * @return {Array.<{offset:number, functionName:string}>}
      *      Array of objects containing the start offset for each matched function name.
      */
-    function findAllMatchingFunctionsInText(text, searchName) {
+    function findAllMatchingDirectivesInText(text, searchName) {
         var allFunctions = _findAllFunctionsInText(text);
         var result = [];
         var lines = text.split("\n");
@@ -409,7 +409,7 @@ define(function (require, exports, module) {
     PerfUtils.createPerfMeasurement("JSUTILS_REGEXP", "RegExp search for all functions");
     PerfUtils.createPerfMeasurement("JSUTILS_END_OFFSET", "Find end offset for a single matched function");
 
-    exports.findAllMatchingFunctionsInText = findAllMatchingFunctionsInText;
+    exports.findAllMatchingDirectivesInText = findAllMatchingDirectivesInText;
     exports._getFunctionEndOffset = _getFunctionEndOffset; // For testing only
-    exports.findMatchingFunctions = findMatchingFunctions;
+    exports.findMatchingDirectives = findMatchingDirectives;
 });
