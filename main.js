@@ -37,7 +37,7 @@ define(function (require, exports, module) {
             return null;
         }
         
-        return token.string;
+        return token.string.replace(/\-\w/g, function(x){ return x.charAt(1).toUpperCase(); });
     }
     
     /**
@@ -45,17 +45,17 @@ define(function (require, exports, module) {
      * For unit and performance tests. Allows lookup by function name instead of editor offset
      * without constructing an inline editor.
      *
-     * @param {!string} functionName
+     * @param {!string} directiveName
      * @return {$.Promise} a promise that will be resolved with an array of function offset information
      */
-    function _findInProject(functionName) {
+    function _findInProject(directiveName) {
         var result = new $.Deferred();
         
         FileIndexManager.getFileInfoList("all")
             .done(function (fileInfos) {
                 PerfUtils.markStart(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
                 
-                NGUtils.findMatchingDirectives(functionName, fileInfos, true)
+                NGUtils.findMatchingDirectives(directiveName, fileInfos, true)
                     .done(function (functions) {
                         PerfUtils.addMeasurement(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
                         result.resolve(functions);
@@ -77,11 +77,11 @@ define(function (require, exports, module) {
      * For unit and performance tests. Allows lookup by function name instead of editor offset .
      *
      * @param {!Editor} hostEditor
-     * @param {!string} functionName
+     * @param {!string} directiveName
      * @return {$.Promise} a promise that will be resolved with an InlineWidget
      *      or null if we're not going to provide anything.
      */
-    function _createInlineEditor(hostEditor, functionName) {
+    function _createInlineEditor(hostEditor, directiveName) {
         // Use Tern jump-to-definition helper, if it's available, to find InlineEditor target.
         var helper = brackets._jsCodeHintsHelper;
         if (helper === null) {
@@ -101,8 +101,8 @@ define(function (require, exports, module) {
                     // Use QuickEdit search now that we know which file to look at.
                     var fileInfos = [];
                     fileInfos.push({name: jumpResp.resultFile, fullPath: resolvedPath});
-                    // JSUtils.findMatchingFunctions(functionName, fileInfos, true)
-                    NGUtils.findMatchingDirectives(functionName, fileInfos, true)
+                    // JSUtils.findMatchingFunctions(directiveName, fileInfos, true)
+                    NGUtils.findMatchingDirectives(directiveName, fileInfos, true)
                         .done(function (functions) {
                             if (functions && functions.length > 0) {
                                 var jsInlineEditor = new MultiRangeInlineEditor(functions);
@@ -123,7 +123,7 @@ define(function (require, exports, module) {
 
                 } else {        // no result from Tern.  Fall back to _findInProject().
 
-                    _findInProject(functionName).done(function (functions) {
+                    _findInProject(directiveName).done(function (functions) {
                         if (functions && functions.length > 0) {
                             var jsInlineEditor = new MultiRangeInlineEditor(functions);
                             jsInlineEditor.load(hostEditor);
@@ -175,12 +175,12 @@ define(function (require, exports, module) {
 
         // Always use the selection start for determining the function name. The pos
         // parameter is usually the selection end.        
-        var functionName = _getDirectiveName(hostEditor, sel.start);
-        if (!functionName) {
+        var directiveName = _getDirectiveName(hostEditor, sel.start);
+        if (!directiveName) {
             return null;
         }
 
-        return _createInlineEditor(hostEditor, functionName);
+        return _createInlineEditor(hostEditor, directiveName);
     }
 
     // init
