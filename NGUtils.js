@@ -20,7 +20,7 @@ define(function (require, exports, module) {
         StringUtils             = brackets.getModule("utils/StringUtils");
 
     /**
-     * Tracks dirty documents between invocations of findMatchingDirectives.
+     * Tracks dirty documents between invocations of findMatches.
      * @type {ChangedDocumentTracker}
      */
     var _changedDocumentTracker = new ChangedDocumentTracker();
@@ -180,7 +180,7 @@ define(function (require, exports, module) {
                 
                 // Cache the result in the fileInfo object
                 fileInfo.JSUtils = {};
-                fileInfo.JSUtils.functions = allFunctions;
+                fileInfo.JSUtils[_functionRegExp] = allFunctions;
                 fileInfo.JSUtils.timestamp = doc.diskTimestamp;
                 
                 result.resolve({doc: doc, functions: allFunctions});
@@ -200,7 +200,7 @@ define(function (require, exports, module) {
         var result = new $.Deferred(),
             isChanged = _changedDocumentTracker.isPathChanged(fileInfo.fullPath);
         
-        if (isChanged && fileInfo.JSUtils) {
+        if (isChanged && fileInfo.JSUtils && fileInfo.JSUtils[_functionRegExp]) {
             // See if it's dirty and in the working set first
             var doc = DocumentManager.getOpenDocumentForPath(fileInfo.fullPath);
             
@@ -221,7 +221,7 @@ define(function (require, exports, module) {
             }
         } else {
             // Use the cache if the file did not change and the cache exists
-            result.resolve(!isChanged && fileInfo.JSUtils);
+            result.resolve(!isChanged && fileInfo.JSUtils && fileInfo.JSUtils[_functionRegExp]);
         }
 
         return result.promise();
@@ -292,7 +292,9 @@ define(function (require, exports, module) {
                 if (useCache) {
                     // Return cached data. doc property is undefined since we hit the cache.
                     // _getOffsets() will fetch the Document if necessary.
-                    result.resolve({/*doc: undefined,*/fileInfo: fileInfo, functions: fileInfo.JSUtils.functions});
+                    var data = {/*doc: undefined,*/fileInfo: fileInfo};
+                    data[_functionRegExp] = fileInfo.JSUtils[_functionRegExp];
+                    result.resolve(data);
                 } else {
                     _readFile(fileInfo, result);
                 }
@@ -350,7 +352,8 @@ define(function (require, exports, module) {
      *      source document, start line, and end line (0-based, inclusive range) for each matching function list.
      *      Does not addRef() the documents returned in the array.
      */
-    function findMatchingDirectives(functionName, fileInfos, keepAllFiles) {
+    function findMatches(pattern, functionName, fileInfos, keepAllFiles) {
+        _functionRegExp = pattern;
         var result          = new $.Deferred(),
             jsFiles         = [],
             docEntries      = [];
@@ -411,5 +414,5 @@ define(function (require, exports, module) {
 
     exports.findAllMatchingDirectivesInText = findAllMatchingDirectivesInText;
     exports._getFunctionEndOffset = _getFunctionEndOffset; // For testing only
-    exports.findMatchingDirectives = findMatchingDirectives;
+    exports.findMatches = findMatches;
 });

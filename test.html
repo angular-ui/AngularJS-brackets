@@ -2,7 +2,7 @@
 <head>
 <script>
 var myModule = angular.module('myModule', []);
-myModule.directive('ng-repeat', function(){
+myModule.directive('myDirective', function(){
     return {
         template: '<cool>I hope this works</cool>',
         scope: {},
@@ -12,6 +12,15 @@ myModule.directive('ng-repeat', function(){
         }
     };
 });
+myModule.controller('Testing', function(){
+  // i sure hope this works too
+});
+
+function tester() {
+    //cool
+}
+
+tester();
 </script>
 <link type="text/css" href="" />
 <title>AngularJS Brackets Demo</title>
@@ -20,8 +29,9 @@ myModule.directive('ng-repeat', function(){
     
 <h1>Kickass</h1>
     
-<ul>
-    <li ng-repeat="i in items"></li>
+<ul ng-controller="Testing">
+    <li my-directive></li>
+    
 </ul>
 </body>
 </html>
