@@ -56,7 +56,7 @@ define(function (require, exports, module) {
         var attribute = hostEditor._codeMirror.getTokenAt({line: pos.line, ch: token.start - 2}, true);
         
         // Return valid function expressions only (function call or reference)
-        if (!(attribute.string === "ng-controller")) {
+        if (!~attribute.string.indexOf("ng-controller")) {
             return null;
         }
         

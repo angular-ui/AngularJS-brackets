@@ -3,7 +3,7 @@
     "title": "AngularJS for Brackets",
     "description": "AngularJS extension for Brackets by the AngularUI team",
     "homepage": "https://github.com/angular-ui/AngularJS-brackets",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "author": "AngularUI (http://angular-ui.github.io)",
     "license": "MIT",
     "engines": {
