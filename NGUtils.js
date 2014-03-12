@@ -158,14 +158,8 @@ define(function (require, exports, module) {
      */
     function _readFile(fileInfo) {
         return DocumentManager.getDocumentForPath(fileInfo.fullPath)
-            .done(function (doc) {
+            .then(function (doc) {
                 var allFunctions = _findAllFunctionsInText(doc.getText());
-                
-                // Cache the result in the fileInfo object
-                fileInfo.JSUtils = {};
-                fileInfo.JSUtils[_functionRegExp] = allFunctions;
-                fileInfo.JSUtils.timestamp = doc.diskTimestamp;
-                
                 return {doc: doc, functions: allFunctions};
             });
     }
