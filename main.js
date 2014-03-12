@@ -7,9 +7,9 @@ define(function (require, exports, module) {
     "use strict";
     
     // Brackets modules
-    var MultiRangeInlineEditor  = brackets.getModule("editor/MultiRangeInlineEditor").MultiRangeInlineEditor,
-        ProjectManager          = brackets.getModule("project/ProjectManager"),
-        EditorManager           = brackets.getModule("editor/EditorManager"),
+    var MultiRangeInlineEditor  = require("editor/MultiRangeInlineEditor").MultiRangeInlineEditor,
+        ProjectManager          = require("project/ProjectManager"),
+        EditorManager           = require("editor/EditorManager"),
         NGUtils                 = require("NGUtils");
     
     var patterns = {
