@@ -10,11 +10,11 @@ define(function (require, exports, module) {
     "use strict";
     
     // Load brackets modules
-    var Async                   = require("utils/Async"),
-        DocumentManager         = require("document/DocumentManager"),
-        FileUtils               = require("file/FileUtils"),
-        _                       = require("thirdparty/lodash"),
-        StringUtils             = require("utils/StringUtils");
+    var Async                   = brackets.getModule("utils/Async"),
+        DocumentManager         = brackets.getModule("document/DocumentManager"),
+        FileUtils               = brackets.getModule("file/FileUtils"),
+        _                       = brackets.getModule("thirdparty/lodash"),
+        StringUtils             = brackets.getModule("utils/StringUtils");
     
     /**
      * Function matching regular expression. Recognizes the forms:
@@ -222,17 +222,27 @@ define(function (require, exports, module) {
      *   contain a map of all function names from the document and each function's start offset.
      */
     function _getFunctionsInFiles(fileInfos) {
-        var docEntries      = [];
+        var docEntries      = [],
+            result          = new $.Deferred();
         
-        return Async.doInParallel(fileInfos, function (fileInfo) {
-            return _readFile(fileInfo)
+        Async.doInParallel(fileInfos, function (fileInfo) {
+            var oneResult = $.Deferred();
+            
+            _readFile(fileInfo)
                 .then(function (docInfo) {
                     docEntries.push(docInfo);
+                    oneResult.resolve();
                 }, function (error) {
                     // If one file fails, continue to search
-                    return;
+                    oneResult.resolve();
                 });
-        }).promise();
+            
+            return oneResult.promise();
+        }).done(function(){
+            result.resolve(docEntries);
+        });
+        
+        return result.promise();
     }
     
     /**
@@ -253,7 +263,7 @@ define(function (require, exports, module) {
         if (!keepAllFiles) {
             // Filter fileInfos for .js files
             jsFiles = fileInfos.filter(function (fileInfo) {
-                return (/^\.js/i).test(FileUtils.getFilenameExtension(fileInfo.fullPath));
+                return (/^\.(js|html?)/i).test(FileUtils.getFileExtension(fileInfo.fullPath));
             });
         } else {
             jsFiles = fileInfos;
