@@ -52,15 +52,19 @@ define(function (require, exports, module) {
      */
     function _getControllerName(hostEditor, pos) {
         var token = hostEditor._codeMirror.getTokenAt(pos, true);
+        var attribute;
         
-        var attribute = hostEditor._codeMirror.getTokenAt({line: pos.line, ch: token.start - 2}, true);
-        
-        // Return valid function expressions only (function call or reference)
-        if (!~attribute.string.indexOf("ng-controller")) {
-            return null;
+        if (~token.string.indexOf("ng-controller")) {
+            attribute = hostEditor._codeMirror.getTokenAt({line: pos.line, ch: token.end + 2}, true);
+            return /\w+/i.exec(attribute.string)[0];
         }
         
-        return token.string.substr(1,token.string.length-2);
+        attribute = hostEditor._codeMirror.getTokenAt({line: pos.line, ch: token.start - 2}, true);
+        
+        // Return valid function expressions only (function call or reference)
+        if (~attribute.string.indexOf("ng-controller")) {
+            return /\w+/i.exec(token.string)[0];
+        }
     }
     
     /**
@@ -173,12 +177,13 @@ define(function (require, exports, module) {
         // Always use the selection start for determining the function name. The pos
         // parameter is usually the selection end.        
         var directiveName, controllerName;
-        if (directiveName = _getDirectiveName(hostEditor, sel.start)) {
-            return _createInlineEditor(hostEditor, directiveName, patterns.directive);
-        }
         
         if (controllerName = _getControllerName(hostEditor, sel.start)) {
             return _createInlineEditor(hostEditor, _getControllerName(hostEditor, sel.start), patterns.controller);   
+        }
+        
+        if (directiveName = _getDirectiveName(hostEditor, sel.start)) {
+            return _createInlineEditor(hostEditor, directiveName, patterns.directive);
         }
         
         return null;
