@@ -8,11 +8,8 @@ define(function (require, exports, module) {
     
     // Brackets modules
     var MultiRangeInlineEditor  = brackets.getModule("editor/MultiRangeInlineEditor").MultiRangeInlineEditor,
-        FileIndexManager        = brackets.getModule("project/FileIndexManager"),
+        ProjectManager          = brackets.getModule("project/ProjectManager"),
         EditorManager           = brackets.getModule("editor/EditorManager"),
-        DocumentManager         = brackets.getModule("document/DocumentManager"),
-        JSUtils                 = brackets.getModule("language/JSUtils"),
-        PerfUtils               = brackets.getModule("utils/PerfUtils"),
         NGUtils                 = require("NGUtils");
     
     var patterns = {
@@ -75,27 +72,10 @@ define(function (require, exports, module) {
      * @return {$.Promise} a promise that will be resolved with an array of function offset information
      */
     function _findInProject(directiveName, pattern) {
-        var result = new $.Deferred();
-        
-        FileIndexManager.getFileInfoList("all")
-            .done(function (fileInfos) {
-                PerfUtils.markStart(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
-                
-                NGUtils.findMatches(pattern, directiveName, fileInfos, true)
-                    .done(function (functions) {
-                        PerfUtils.addMeasurement(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
-                        result.resolve(functions);
-                    })
-                    .fail(function () {
-                        PerfUtils.finalizeMeasurement(PerfUtils.ANGULARJS_FIND_DIRECTIVE);
-                        result.reject();
-                    });
-            })
-            .fail(function () {
-                result.reject();
+        return ProjectManager.getAllFiles()
+            .done(function (files) {
+                return NGUtils.findMatches(pattern, directiveName, files, true);
             });
-        
-        return result.promise();
     }
     
     /**
@@ -115,7 +95,6 @@ define(function (require, exports, module) {
         }
 
         var result = new $.Deferred();
-        PerfUtils.markStart(PerfUtils.ANGULARJS_INLINE_CREATE);
 
         var response = helper();
         if (response.hasOwnProperty("promise")) {
@@ -127,23 +106,19 @@ define(function (require, exports, module) {
                     // Use QuickEdit search now that we know which file to look at.
                     var fileInfos = [];
                     fileInfos.push({name: jumpResp.resultFile, fullPath: resolvedPath});
-                    // JSUtils.findMatchingFunctions(directiveName, fileInfos, true)
                     NGUtils.findMatches(pattern, directiveName, fileInfos, true)
                         .done(function (functions) {
                             if (functions && functions.length > 0) {
                                 var jsInlineEditor = new MultiRangeInlineEditor(functions);
                                 jsInlineEditor.load(hostEditor);
                                 
-                                PerfUtils.addMeasurement(PerfUtils.ANGULARJS_INLINE_CREATE);
                                 result.resolve(jsInlineEditor);
                             } else {
                                 // No matching functions were found
-                                PerfUtils.addMeasurement(PerfUtils.ANGULARJS_INLINE_CREATE);
                                 result.reject();
                             }
                         })
                         .fail(function () {
-                            PerfUtils.addMeasurement(PerfUtils.ANGULARJS_INLINE_CREATE);
                             result.reject();
                         });
 
@@ -154,21 +129,17 @@ define(function (require, exports, module) {
                             var jsInlineEditor = new MultiRangeInlineEditor(functions);
                             jsInlineEditor.load(hostEditor);
                             
-                            PerfUtils.addMeasurement(PerfUtils.ANGULARJS_INLINE_CREATE);
                             result.resolve(jsInlineEditor);
                         } else {
                             // No matching functions were found
-                            PerfUtils.addMeasurement(PerfUtils.ANGULARJS_INLINE_CREATE);
                             result.reject();
                         }
                     }).fail(function () {
-                        PerfUtils.finalizeMeasurement(PerfUtils.ANGULARJS_INLINE_CREATE);
                         result.reject();
                     });
                 }
 
             }).fail(function () {
-                PerfUtils.finalizeMeasurement(PerfUtils.ANGULARJS_INLINE_CREATE);
                 result.reject();
             });
 
@@ -215,6 +186,4 @@ define(function (require, exports, module) {
 
     // init
     EditorManager.registerInlineEditProvider(provider);
-    PerfUtils.createPerfMeasurement("ANGULARJS_INLINE_CREATE", "AngularJS Inline Editor Creation");
-    PerfUtils.createPerfMeasurement("ANGULARJS_FIND_DIRECTIVE", "AngularJS Find Directive");
 });
