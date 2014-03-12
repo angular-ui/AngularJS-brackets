@@ -73,7 +73,7 @@ define(function (require, exports, module) {
      */
     function _findInProject(directiveName, pattern) {
         return ProjectManager.getAllFiles()
-            .done(function (files) {
+            .then(function (files) {
                 return NGUtils.findMatches(pattern, directiveName, files, true);
             });
     }
