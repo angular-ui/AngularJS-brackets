@@ -9,6 +9,7 @@ of Angular-JS-brackets in action.
 
 ![Screenshot](https://raw.github.com/sbruchmann/AngularJS-brackets/13c262f326059d6c01ce31c990cb576a730564ed/screenshot.png)
 
+![GIF!](http://cl.ly/image/3L1U3r3z3k1m/Brackets.mov.gif)
 
 ## Contribute
 
