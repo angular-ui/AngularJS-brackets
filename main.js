@@ -13,8 +13,8 @@ define(function (require, exports, module) {
         NGUtils                 = require("NGUtils");
     
     var patterns = {
-        directive: /\.directive\(['"]([a-zA-Z-]+)['"]/g,
-        controller: /\.controller\(['"](\w+)['"]/g
+        directive: /\.directive[ \n\r\t]*\([ \n\r\t]*['"]([a-zA-Z-]+)['"]/g,
+        controller: /\.controller[ \n\r\t]*\([ \n\r\t]*['"](\w+)['"]/g
     }
     
     /**
