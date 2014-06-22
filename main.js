@@ -15,7 +15,7 @@ define(function (require, exports, module) {
     var patterns = {
         directive: /\.directive\(['"]([a-zA-Z-]+)['"]/g,
         controller: /\.controller\(['"](\w+)['"]/g
-    }
+    };
     
     /**
      * Return the token string that is at the specified position.
@@ -176,13 +176,14 @@ define(function (require, exports, module) {
 
         // Always use the selection start for determining the function name. The pos
         // parameter is usually the selection end.        
-        var directiveName, controllerName;
+        var directiveName  = _getDirectiveName(hostEditor, sel.start),
+            controllerName  = _getControllerName(hostEditor, sel.start);
         
-        if (controllerName = _getControllerName(hostEditor, sel.start)) {
-            return _createInlineEditor(hostEditor, _getControllerName(hostEditor, sel.start), patterns.controller);   
+        if (controllerName) {
+            return _createInlineEditor(hostEditor, controllerName, patterns.controller);
         }
         
-        if (directiveName = _getDirectiveName(hostEditor, sel.start)) {
+        if (directiveName) {
             return _createInlineEditor(hostEditor, directiveName, patterns.directive);
         }
         
