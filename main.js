@@ -181,9 +181,6 @@ define(function (require, exports, module) {
         var directiveName  = _getDirectiveName(hostEditor, sel.start),
             controllerName  = _getControllerName(hostEditor, sel.start);
 
-        console.info('Directive: ', directiveName);
-        console.info('Controller: ', controllerName);
-        
         if (controllerName) {
             return _createInlineEditor(hostEditor, controllerName, patterns.controller);
         }
