@@ -1,4 +1,4 @@
-/* https://github.com/adobe/brackets/blob/master/src/language/JSUtils.js */
+    /* https://github.com/adobe/brackets/blob/master/src/language/JSUtils.js */
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
 /*global define, $, brackets, CodeMirror */
@@ -14,6 +14,7 @@ define(function (require, exports, module) {
         DocumentManager         = brackets.getModule("document/DocumentManager"),
         FileUtils               = brackets.getModule("file/FileUtils"),
         _                       = brackets.getModule("thirdparty/lodash"),
+        CodeMirror              = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror"),
         StringUtils             = brackets.getModule("utils/StringUtils");
     
     /**
