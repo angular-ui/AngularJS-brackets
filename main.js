@@ -165,26 +165,23 @@ define(function (require, exports, module) {
     function provider(hostEditor, pos) {
         // Only provide an editor when cursor is in HTML content
         if (hostEditor.getModeForSelection() !== "html") {
-            console.info('AJS: No HTML');
             return null;
         }
         
         // Only provide an editor if the selection is within a single line
         var sel = hostEditor.getSelection();
         if (sel.start.line !== sel.end.line) {
-            console.info('AJS: Multi Selection');
             return null;
         }
 
         // Always use the selection start for determining the function name. The pos
         // parameter is usually the selection end.        
-        var directiveName  = _getDirectiveName(hostEditor, sel.start),
-            controllerName  = _getControllerName(hostEditor, sel.start);
-
+        var controllerName  = _getControllerName(hostEditor, sel.start);
         if (controllerName) {
             return _createInlineEditor(hostEditor, controllerName, patterns.controller);
         }
         
+        var directiveName  = _getDirectiveName(hostEditor, sel.start);
         if (directiveName) {
             return _createInlineEditor(hostEditor, directiveName, patterns.directive);
         }
