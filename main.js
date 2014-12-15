@@ -39,6 +39,11 @@ define(function (require, exports, module) {
             return null;
         }
         
+        // Trim the 'data-' prefix
+        if (token.indexOf('data-')===0) {
+            token = token.substr(5);
+        }
+        
         return token.string.replace(/\-\w/g, function(x){ return x.charAt(1).toUpperCase(); });
     }
     
