@@ -40,8 +40,8 @@ define(function (require, exports, module) {
         }
         
         // Trim the 'data-' prefix
-        if (token.indexOf('data-')===0) {
-            token = token.substr(5);
+        if (token.string.indexOf('data-')===0) {
+            token.string = token.string.substr(5);
         }
         
         return token.string.replace(/\-\w/g, function(x){ return x.charAt(1).toUpperCase(); });
